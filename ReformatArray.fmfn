@@ -1,0 +1,80 @@
+/*
+ * =====================================================
+ * ReformatArray ( valueList ; quoteStyle ; braceStyle ; newSeparator )
+ * 
+ * PARAMETERS:
+ *		valueList = Return separated values
+ *		quoteStyle = Quote Punctuation style. Defaults to apostrophe ( ' ). May be quotation mark ( " ),  or any other single or double character (open & close) delimiter . Examples: double quotes ( “” ), exclamation marks ( ¡! ),, pipe symbols ( | ) , even carriage returns ( ¶ )
+ *		braceStyle = Enclosing Punctuation style. Defaults to open & close parentheses "( )". May be any other single character delimiter. Examples: braces { } , brackets [ ], double angle quotation marks « », double quotes “”. Use "NULL" to opt out.
+ *		newSeparator = New list delimiter. Defaults to comma "," separator. May be any other value of any length, the sky is the limit.
+ *
+ * RETURNS:
+ *		Returns a text array in any format you specify, using custom separator, and left and right quotes, and left and right braces
+ *
+ *		Examples: 
+ *				ReformatArray ( "Label1¶Label2¶Label3¶Label4" ; "\"" ; "null" ; " : " )  returns —-> "Label1" : "Label2" : "Label3" : "Label4"
+ *
+ *				ReformatArray ( "Label1¶Label2¶Label3¶Label4" ; "«»" ; "" ; "; " )  returns —-> («Label1»; «Label2»; «Label3»; «Label4»)
+ *
+ *		 		ReformatArray ( "item1¶item2¶item3¶item4" ; "'" ; "" ; "" )   returns  —-> ('item1','item2','item3','item4')
+ *
+ *		Use cases: 
+ *				Create quoted lists for executing SQL queries such as "SELECT firstname,lastname,city,state FROM myContacts WHERE state IN ('MI','IN','OH')": 
+ *		 		ReformatArray ( "MI¶IN¶OH" ; "'" ; "" ; "" )   returns  —-> ('MI','IN','OH')
+ *
+ *				Create custom JSON and other name-value pairs by using in conjunction with a merge array recursive function ( such as "CombineLists" http://www.briandunning.com/cf/1805). For example:
+ *
+ *				Let ( [
+ *
+ *					list1 = ReformatArray ( "Label1¶Label2¶Label3¶Label4" ; "\"" ; "null" ; "¶" ) ;
+ *					list2 = ReformatArray ( "fantastic!¶...but what about¶a syntax for adding¶an element to the END of an array?" ; "\"" ; "null" ; "¶" )
+ *					] ; 
+ *
+ *					//calculation
+ *					ReformatArray ( CombineLists ( list1 ; list2 ; 1 ; " : " ) ; "{}" ; "[]" ; " , " )
+ *				)
+ *
+ *				Returns the following JSON —> [{"Label1" : "fantastic!"} , {"Label2" : "...but what about"} , {"Label3" : "a syntax for adding"} , {"Label4" : "an element to the END of an array?"}]
+ *
+ *
+ * DEPENDENCIES:
+ * 		None
+ *
+ * NOTES:
+ * 		To opt out of the enclosing "braceStyle" punctuation, Use "null" parameter value
+  *
+* RELEASE:
+ * 		2017-04-27 - Initial release by Julio Toledo
+ * =====================================================
+ * 
+ */
+
+Let ( [ 
+
+	Separator = If ( IsEmpty ( newSeparator ) ; ","; newSeparator ) ;
+
+	QuoteType = If ( IsEmpty ( quoteStyle ) ; "'"; quoteStyle )  ;
+
+	RightQuote =   Right ( QuoteType ; 1 ) ;
+
+	LeftQuote =   Left ( QuoteType ; 1 ) ;
+
+	ListBrace = If ( IsEmpty ( braceStyle ) ; "()"; If ( braceStyle = "NULL" ; "" ; braceStyle ) ) ; 
+
+	RightBrace = Right ( ListBrace ; 1 ) ;
+
+	LeftBrace = Left  ( ListBrace ; 1 ) ;
+
+	//remove last carriage retrun ( if any)
+
+	LastChar = Right ( valueList ; 1 ) ;
+
+	TrimLast = Left ( valueList ; Length ( ValueList ) - 1 ) ;
+
+	cleanList = Case ( LastChar = "¶" or LastChar = Char ( "10" ) or LastChar = Char ( "13" )  ; TrimLast ; ValueList )  
+
+	] ; 
+
+	//calculation
+	LeftBrace & LeftQuote & Substitute ( cleanList ; ¶ ; RightQuote & Separator & LeftQuote ) & RightQuote & RightBrace
+ )
