@@ -1,37 +1,38 @@
 /*
  * =====================================================
- * ReformatArray ( valueList ; quoteStyle ; braceStyle ; newSeparator )
+ * ArrayReformat ( valueList ; quoteStyle ; braceStyle ; newSeparator ; oldSeparator )
  * 
  * PARAMETERS:
- *		valueList = Return separated values
+ *		valueList = Any value list with any separator of any length (i.e. "Label1 : Label2 : ", "Label1,Label2", "Label1¶Label2", "Label1 ||| Label2 |||", "Label1__COLUMN_SEPARATOR__Label2__COLUMN_SEPARATOR__”, etc.)
  *		quoteStyle = Quote Punctuation style. Defaults to apostrophe ( ' ). May be quotation mark ( " ),  or any other single or double character (open & close) delimiter . Examples: double quotes ( “” ), exclamation marks ( ¡! ),, pipe symbols ( | ) , even carriage returns ( ¶ )
  *		braceStyle = Enclosing Punctuation style. Defaults to open & close parentheses "( )". May be any other single character delimiter. Examples: braces { } , brackets [ ], double angle quotation marks « », double quotes “”. Use "NULL" to opt out.
  *		newSeparator = New list delimiter. Defaults to comma "," separator. May be any other value of any length, the sky is the limit.
+ *		oldSeparator = Original list delimiter. Defaults to carriage return "¶" separator. May be any other value of any length, the sky is the limit.
  *
  * RETURNS:
  *		Returns a text array in any format you specify, using custom separator, and left and right quotes, and left and right braces
  *
  *		Examples: 
- *				ReformatArray ( "Label1¶Label2¶Label3¶Label4" ; "\"" ; "null" ; " : " )  returns —-> "Label1" : "Label2" : "Label3" : "Label4"
+ *				ArrayReformat ( "Label1¶Label2¶Label3¶Label4" ; "\"" ; "null" ; " : " ; ""  )  returns —-> "Label1" : "Label2" : "Label3" : "Label4"
  *
- *				ReformatArray ( "Label1¶Label2¶Label3¶Label4" ; "«»" ; "" ; "; " )  returns —-> («Label1»; «Label2»; «Label3»; «Label4»)
+ *				ArrayReformat ( "Label1¶Label2¶Label3¶Label4" ; "«»" ; "" ; "; ", "" )  returns —-> («Label1»; «Label2»; «Label3»; «Label4»)
  *
- *		 		ReformatArray ( "item1¶item2¶item3¶item4" ; "'" ; "" ; "" )   returns  —-> ('item1','item2','item3','item4')
+ *		 		ArrayReformat ( "item1¶item2¶item3¶item4" ; "'" ; "" ; "" ; "" )   returns  —-> ('item1','item2','item3','item4')
  *
  *		Use cases: 
  *				Create quoted lists for executing SQL queries such as "SELECT firstname,lastname,city,state FROM myContacts WHERE state IN ('MI','IN','OH')": 
- *		 		ReformatArray ( "MI¶IN¶OH" ; "'" ; "" ; "" )   returns  —-> ('MI','IN','OH')
+ *		 		ArrayReformat ( "MI¶IN¶OH" ; "'" ; "" ; "" )   returns  —-> ('MI','IN','OH')
  *
- *				Create custom JSON and other name-value pairs by using in conjunction with a merge array recursive function ( such as "CombineLists" http://www.briandunning.com/cf/1805). For example:
+ *				Create custom JSON and other name-value pairs by using in conjunction with a merge array recursive function ( such as "ArrayCombine" http://www.briandunning.com/cf/2037). For example:
  *
  *				Let ( [
  *
- *					list1 = ReformatArray ( "Label1¶Label2¶Label3¶Label4" ; "\"" ; "null" ; "¶" ) ;
- *					list2 = ReformatArray ( "fantastic!¶...but what about¶a syntax for adding¶an element to the END of an array?" ; "\"" ; "null" ; "¶" )
+ *					list1 = ArrayReformat ( "Label1,Label2,Label3,Label4" ; "\"" ; "null" ; "¶" ;  "," ) ;
+ *					list2 = ArrayReformat ( "fantastic!¶...but what about¶a syntax for adding¶an element to the END of an array?" ; "\"" ; "null" ; "¶"; "" )
  *					] ; 
  *
  *					//calculation
- *					ReformatArray ( CombineLists ( list1 ; list2 ; 1 ; " : " ) ; "{}" ; "[]" ; " , " )
+ *					ArrayReformat ( ArrayCombine ( list1 ; list2 ; 1 ; " : " ) ; "{}" ; "[]" ; " , " ; "" )
  *				)
  *
  *				Returns the following JSON —> [{"Label1" : "fantastic!"} , {"Label2" : "...but what about"} , {"Label3" : "a syntax for adding"} , {"Label4" : "an element to the END of an array?"}]
@@ -42,14 +43,19 @@
  *
  * NOTES:
  * 		To opt out of the enclosing "braceStyle" punctuation, Use "null" parameter value
-  *
-* RELEASE:
- * 		2017-04-27 - Initial release by Julio Toledo
+ *
+ * RELEASE:
+ * 		2017-04-27 - 	Initial release by Julio Toledo
+ * 		2017-05-05 - 	Modifications by Julio Toledo:
+ * 					* renamed function from "ReformatArray" to "ArrayReformat"
+ * 					* added "oldSeparator" optional parameter, which provides the ability to substitute any existing value separator for any other separator (defaults to carriage return "¶")
  * =====================================================
  * 
  */
 
 Let ( [ 
+
+	OldSeparator = If ( IsEmpty ( oldSeparator ) ; "¶"; oldSeparator ) ;
 
 	Separator = If ( IsEmpty ( newSeparator ) ; ","; newSeparator ) ;
 
@@ -76,5 +82,5 @@ Let ( [
 	] ; 
 
 	//calculation
-	LeftBrace & LeftQuote & Substitute ( cleanList ; ¶ ; RightQuote & Separator & LeftQuote ) & RightQuote & RightBrace
+	LeftBrace & LeftQuote & Substitute ( cleanList ; oldSeparator ; RightQuote & Separator & LeftQuote ) & RightQuote & RightBrace
  )
