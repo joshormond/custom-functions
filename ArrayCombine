@@ -1,0 +1,53 @@
+/*
+ * =====================================================
+ * ArrayCombine ( array1 ; array2 ; startposition ; separator )
+ * 
+ * PARAMETERS:
+ *		array1 = Return separated values
+ *		array2 = Return separated values
+ *		startposition = numerical index of which value to start from
+ *		separator = separator string (any length)
+ *
+ * RETURNS:
+ *		Returns a combined array from two separate arrays, similar to php's array_combine function.
+ *		Use in conjunction with ArrayReformat function (http://www.briandunning.com/cf/2033) to create custom syntax name-value pairs, including JSON
+ *
+ *		Examples: 
+ *
+ *				Let ( [
+ *
+ *					list1 = ArrayReformat ( "Label1¶Label2¶Label3¶Label4" ; "\"" ; "null" ; "¶" ; "" ) ;
+ *					list2 = ArrayReformat ( "fantastic!¶...but what about¶a syntax for adding¶an element to the END of an array?" ; "\"" ; "null" ; "¶" )
+ *					] ; 
+ *
+ *					//calculation
+ *					ArrayReformat ( ArrayCombine ( list1 ; list2 ; 1 ; " : " ; "" ) ; "{}" ; "[]" ; " , " )
+ *				)
+ *
+ *				Returns the following JSON —> [{"Label1" : "fantastic!"} , {"Label2" : "...but what about"} , {"Label3" : "a syntax for adding"} , {"Label4" : "an element to the END of an array?"}]
+ *
+ *
+ * DEPENDENCIES:
+ * 		None
+ *
+ * NOTES:
+ * 		Recursive function
+ *
+ * RELEASE:
+ * 		2017-05-04 - Initial release by Julio Toledo
+ * 		2017-05-05 - Function renamed by Julio Toledo from "CombineArrays" to "ArrayCombine"
+ * =====================================================
+ * 
+ */
+
+Let ( [ 
+combination = 
+		Case ( 
+			startposition = ValueCount( array1 ) +1 ; "" ; 
+			GetValue( array1; startposition) & separator & GetValue( array2 ; startposition ) & ¶ & ArrayCombine ( array1 ; array2 ; startposition +1 ; separator )
+		) 
+] ;
+
+combination
+
+)
