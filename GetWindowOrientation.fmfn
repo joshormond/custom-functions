@@ -1,0 +1,64 @@
+/*
+ * =====================================================
+ * GetWindowOrientation
+ * 
+ * PARAMETERS:
+ *		None
+ *
+ *
+ * RETURNS:
+ *		Converts window orientation values ( aspect ratio and title bar position )  into human readable strings
+ *
+ *		Example: 
+ *
+ *		Returns "portrait" when orientation  = 1  ( window height > window width and title bar is upright )
+ *
+ *		Returns "portrait upside down" when orientation  = 2 ( window height > window width and title bar is inverted )
+ *
+ *		Returns "square" when orientation  = 0 ( aspect ratio is proportional )
+ *
+ *		Returns "landscape right" when orientation  = -1 ( window width > window height and title bar is upright )
+ *
+ *		Returns "landscape left"" when orientation  = -2 ( window width > window height and title bar is inverted )
+ *
+ *		Returns "N/A" as default
+ *
+ * DEPENDENCIES:
+ * 		None
+ *
+ *
+ * KNOWN ISSUES:
+ * 		None
+ *
+ * NOTES:
+ * 		None
+ *
+ * RELEASE:
+ * 		2019-01-04 - Initial release by Julio Toledo, Automation USA LLC ( www.automationusa.net )
+ *
+ * =====================================================
+ * 
+ */
+
+Let (
+
+	Orientation = Get ( WindowOrientation ) ;
+
+	//calculation
+	Case ( 
+
+		Orientation = -2 ; "landscape left" ; 
+
+		Orientation = -1 ; "landscape right" ; 
+
+		Orientation = 0 ; "square" ; 
+
+		Orientation = 1 ; "portrait" ; 
+
+		Orientation = 2 ; "portrait upside down" ; 
+
+		//defaultResult
+		"N/A"		
+	)
+
+)
