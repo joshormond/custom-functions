@@ -6,3 +6,5 @@ FileMaker Custom Functions
 'GetMinorVersion' function extracts Patch and Minor application version numbers (as string) from version string
 'GetSystemPlatformVersion' function transforms host OS name & version number or OS abbreviation & browser version to human readable format
 'GetLayoutViewState' function converts window view state integer values into human readable strings
+'GetWindowOrientation' function converts window orientation integer values ( aspect ratio and title bar position ) into human readable strings
+'GetWindowStyle' function converts window style integer values into human readable strings
