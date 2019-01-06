@@ -8,3 +8,4 @@ FileMaker Custom Functions
 'GetLayoutViewState' function converts window view state integer values into human readable strings
 'GetWindowOrientation' function converts window orientation integer values ( aspect ratio and title bar position ) into human readable strings
 'GetWindowStyle' function converts window style integer values into human readable strings
+'JSONExplode' function transforms JSON into a return-delimited list similar to YAML
