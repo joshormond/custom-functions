@@ -1,0 +1,55 @@
+/*
+ * =====================================================
+ * GetWindowStyle
+ * 
+ * PARAMETERS:
+ *		None
+ *
+ *
+ * RETURNS:
+ *		Converts window style values into human readable strings
+ *
+ *		Example: 
+ *
+ *		Returns "Card Window" when window style = 3
+ *		Returns "Dialog Window" when window style = 2
+ *		Returns "N/A" as default
+*
+ * DEPENDENCIES:
+ * 		None
+ *
+ *
+ * KNOWN ISSUES:
+ * 		None
+ *
+ * NOTES:
+ * 		None
+ *
+ * RELEASE:
+ * 		2019-01-03 - Initial release by Julio Toledo, Automation USA LLC ( www.automationusa.net )
+ *
+ * =====================================================
+ * 
+ */
+
+Let ( 
+
+	windowStyle = Get ( WindowStyle ) ;
+
+	//calculation
+	Case ( 
+
+	windowStyle = 3 ; "Card Window" ; 
+
+	windowStyle = 2 ; "Dialog Window" ; 
+
+	windowStyle = 1 ; "Floating Document Window" ; 
+
+	windowStyle = 0 ; "Document Window" ; 
+
+	//defaultResult 
+	"N/A"
+
+	)
+
+)
