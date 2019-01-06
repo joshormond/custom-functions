@@ -1,0 +1,123 @@
+/*
+ * =====================================================
+ * JSONExplode ( JSON )
+ * 
+ * PARAMETERS:
+ *		JSON = JSON Element
+ *
+ *
+ * RETURNS:
+ *		Transforms JSON into a return-delimited list.
+ *
+ *		Example: 
+ *
+ *		{
+ *			"bakery" : 
+ *			{
+ *				"product" : 
+ *				[
+ *					{
+ *						"id" : "FB1",
+ *						"name" : "Donuts",
+ *						"price": 1.99,
+ *						"stock" : 43,
+ *						"category" : "Breads",
+ *						"special" : true
+ *					},
+ *					{
+ *						"id" : "FB2",
+ *						"price": 22.5,
+ *						"name" : "Chocolate Cake",
+ *						"stock" : 23,
+ *						"category" : "Cakes", 
+ *						"special" : true
+ *					},
+ *					{
+ *						"id" : "FB3",
+ *						"price": 3.95,
+ *						"name" : "Baguette",
+ *						"stock" : 34,
+ *						"category" : "Breads", 
+ *						"special" : true
+ *					}
+ *				]
+ *			}
+ *		} 
+ *
+ *		Returns the following list: 
+ *
+ *		bakery:
+ *		product:
+ *		id:FB1
+ *		name:Donuts
+ *		price: 1.99
+ *		stock:43
+ *		category:Breads
+ *		special:true
+ *		id:FB2
+ *		price: 22.5
+ *		name:Chocolate Cake
+ *		stock:23
+ *		category:Cakes
+ *		special:true
+ *		id:FB3
+ *		price: 3.95
+ *		name:Baguette
+ *		stock:34
+ *		category:Breads
+ *		special:true 
+ *
+ * DEPENDENCIES:
+ * 		CullNulls custom function by Debi Fuchs, Aptworks Consulting (https://www.briandunning.com/cf/897)
+ *
+ *
+ * KNOWN ISSUES:
+ * 		None
+ *
+ * NOTES:
+ * 		This custom function is similar to ExplodeJSON (https://www.briandunning.com/cf/2028) 
+ * 		with the following significant differences:
+ * 		1. Preserves commas in JSON body  (i.e. "location:San Jose, Central, CA" )
+ * 		2. Removes "pretty print" formatting (i.e. "JSONFormatElements ( json )" 
+ * 		    ( https://fmhelp.filemaker.com/help/17/fmp/en/#page/FMP_Help%2Fjsonformatelements.html )
+ *
+ * RELEASE:
+ * 		2019-01-03 - Initial release by Julio Toledo, Automation USA LLC ( www.automationusa.net )
+ *
+ * =====================================================
+ * 
+ */
+
+Let ( 	
+	[ 
+
+		explodedjson = TrimAll (  JSON  ; 1 ; 1 ); 
+
+		explodedjson = Substitute 
+
+				( 
+					explodedjson ; 
+				
+					[ Char ( "9" ) ; "" ] ;
+					[ Char ( "10" ) ; "¶" ] ;
+					[ " : "; ":" ] ; 
+					[ " :"; ":" ] ; 
+					[ ",\"" ; "¶" ] ;
+					[ "\",\""; "¶" ] ; 
+					[ "}" ; "¶" ] ; 
+					[ "{" ; "¶" ] ; 
+					[ "}"; "" ] ; 
+					[ "\""; "" ] ; 
+					[ "["; "" ] ; 
+					[ "]"; "" ] ; 
+					[ "\","; "" ] ;
+					[ "¶," ; "¶" ];
+					[ " ," ; "" ] ;
+					[ " ¶"; "¶" ] ; 
+					[ ",¶"; "¶" ] 
+		) 
+
+	] ;
+
+	CullNulls ( Middle ( explodedjson ; 2 ; Length ( explodedjson ) ) )
+)
