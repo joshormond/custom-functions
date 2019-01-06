@@ -1,0 +1,54 @@
+/*
+ * =====================================================
+ * GetLayoutViewState
+ * 
+ * PARAMETERS:
+ *		None
+ *
+ *
+ * RETURNS:
+ *		Converts window view state values into human readable strings
+ *
+ *		Example: 
+ *
+ *		Returns "Table View" when window view state = 2
+ *		Returns "List View" when window view state = 1
+ *		Returns "Form View" when window view state = 0
+ *		Returns "N/A" as default
+ *
+ * DEPENDENCIES:
+ * 		None
+ *
+ *
+ * KNOWN ISSUES:
+ * 		None
+ *
+ * NOTES:
+ * 		None
+ *
+ * RELEASE:
+ * 		2019-01-03 - Initial release by Julio Toledo, Automation USA LLC ( www.automationusa.net )
+ *
+ * =====================================================
+ * 
+ */
+
+Let ( 
+
+	viewStyle = Get ( LayoutViewState ) ;
+
+	//calculation
+	Case ( 
+
+	viewStyle = 2 ; "Table View" ; 
+
+	viewStyle = 1 ; "List View" ; 
+
+	viewStyle = 0 ; "Form View" ; 
+
+	//defaultResult 
+	"N/A"
+
+	)
+
+)
