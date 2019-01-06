@@ -7,7 +7,7 @@
  *
  *
  * RETURNS:
- *		Converts window view state values into human readable strings
+ *		Returns host OS name and version number or OS abbreviation and browser version in human readable format.
  *
  *		Example: 
  *
