@@ -10,7 +10,7 @@
  *		Returns Patch and Minor application version numbers (as string) by:
  *		a) filtering out all non-numeric characters from version string,
  *		b) truncating version integer from version float, and
- *		c) normaliings various non-normal methods of semantic versioning ( https://semver.org ), 
+ *		c) normalizing various non-normal methods of semantic versioning ( https://semver.org ), 
   *		   including use of non-standard separators such as underscore "_", hyphen "-", and comma ","
  *
  *		Examples: 
