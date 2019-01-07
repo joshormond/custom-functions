@@ -43,6 +43,8 @@
  *
  * RELEASE:
  * 		2019-01-06 - Initial release by Julio Toledo, Automation USA LLC ( www.automationusa.net )
+ * 		2019-01-07 - Modified by Julio Toledo, Automation USA LLC ( www.automationusa.net )
+ * 			     Replaced “Int ( )” function with nested “Left ( Position ( ) )” functions to address files created with locales that use coma as the decimal separator
  *
  * =====================================================
  * 
@@ -68,7 +70,9 @@ Let (
 				version
 			) ;
 
-	major =  Int ( version )
+	firstPeriod = Position ( version ; "." ; 1 ; 1 ) -1 ;
+
+	major =  Left ( version ; firstPeriod )
 
 	] ; 
 
