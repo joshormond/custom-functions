@@ -5,7 +5,7 @@ FileMaker Custom Functions
 
 'ArrayCombine' function returns a combined array from two separate arrays, similar to php's array_combine function
 
-'CullNulls'function by Debi Fuchs removes all empty items from a list. Added in effort to provide all 3rd party dependencies/includes required by our custom functions.
+'CullNulls' function by Debi Fuchs removes all empty items from a list. Added in effort to provide all 3rd party dependencies/includes required by our custom functions.
 
 'GetFileSize' function transform byte size into a human readable memory string (i.e. '10 Megabytes' )
 
