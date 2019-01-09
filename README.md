@@ -5,7 +5,11 @@ FileMaker Custom Functions
 
 'ArrayCombine' function returns a combined array from two separate arrays, similar to php's array_combine function
 
+'CullNulls'function by Debi Fuchs removes all empty items from a list. Added in effort to provide all 3rd party dependencies/includes required by our custom functions.
+
 'GetFileSize' function transform byte size into a human readable memory string (i.e. '10 Megabytes' )
+
+'GetLayoutObjectNames' function extracts list of all **named** layout objects from the specified file name and layout name and returns json, value list, or named value list.
 
 'GetMajorVersion' function extracts Major application version number (as string) from version string. This function is intended to evaluate file names, server application version,  API versions, global variables, window names, or any other string you throw at it.
 
