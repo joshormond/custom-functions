@@ -1,0 +1,197 @@
+/*
+ * =====================================================
+ * GetLayoutObjectNames
+ * 
+ * PARAMETERS:
+ *		"file" = file name as string, defaults to "Get ( FileName )" function.
+ *		"layout" = layout name as string, defaults to "Get ( LayoutName )" function.
+ *		"output" = output format as string (acceptable values are ( "list", "json", "valuePairs", "namedList" , "nameValuePairs" ) , defaults to "list".
+ *
+ * RETURNS:
+ *		Extracts list of all **named** layout objects from the specified file name and layout name.
+ *		Returns object names in one of three output formats: 
+ *		1. a return-delimited list ( default )
+ *		2. a JSON element
+ *		3. a name/value paired return-delimited list (using the "JSONExplode ( JSON )" function )
+ *
+ *		EXAMPLE FILE
+ *		For a hypothetical file named "09_Portal Current Table" containing a layout called "Demo" where the "LayoutObjectNames ( )" function returns the following object list: 
+ *		<
+ *		>
+ *		<
+ *		portal
+ *		<
+ *		>
+ *		<
+ *		<
+ *		<
+ *		<
+ *		>
+ *		>
+ *		>
+ *		>
+ *		>
+ *		location
+ *		<
+ *		map
+ *		>
+ *		work orders
+ *		<
+ *		>
+ *		portal2
+ *		<
+ *		>
+ *		bbar_Gear
+ *		<
+ *		popbtn_Close
+ *		>
+ *		btn_Back
+ *		<
+ *		>
+ *
+ *		EXAMPLE OUTPUT
+ *		GetLayoutObjectNames ( '"" ; "" ; ""  ) returns the following list when "Demo" layout is the current layout in the current file:
+ *
+ *		portal
+ *		location
+ *		map
+ *		work orders
+ *		portal Copy
+ *		bbar_Gear Copy
+ *		popbtn_Close
+ *		btn_Back
+ *
+ *		GetLayoutObjectNames ( '"" ; "" ; "json"  ) returns the following JSON element when "Demo" layout is the current layout in the current file:
+ *
+ *		{
+ *			"layoutName" : "Demo",
+ *			"layoutNumber" : 13,
+ *			"namedObjects" : 
+ *			{
+ *				"objectCount" : 8,
+ *				"objectNames" : "portal\rlocation\rmap\rwork orders\rportal2\rbbar_Gear\rpopbtn_Close\rbtn_Back"
+ *			}
+ *		}
+ *
+ *
+ *		GetLayoutObjectNames ( "" ; "" ; "nvp"  ) returns the following named list when "Demo" layout is the current layout in the current file: 
+ *
+ *		layoutName:Demo
+ * 		layoutNumber:13
+ * 		namedObjects:
+ * 		objectCount:8
+ * 		objectNames:portal\rlocation\rmap\rwork orders\rporta2\rbbar_Gear\rpopbtn_Close\rbtn_Back
+ *
+ *
+ *		GetLayoutObjectNames ( "09_Portal Current Table" ; "Demo" ; "nvp"  ) returns the following named list from "Demo" layout "09_Portal Current Table" file: 
+ *
+ *		layoutName:Demo
+ * 		layoutNumber:13
+ * 		namedObjects:
+ * 		objectCount:8
+ * 		objectNames:portal\rlocation\rmap\rwork orders\rporta2\rbbar_Gear\rpopbtn_Close\rbtn_Back
+ *
+ * DEPENDENCIES:
+ *		1. JSONExplode custom function by Julio Toledo, Automation USA LLC ( https://www.briandunning.com/cf/2196 ) , ( https://github.com/Automation-USA/custom-functions/blob/master/JSONExplode.fmfn )
+ *		2. CullNulls custom function by Debi Fuchs, Aptworks Consulting [ required by JSONExplode ( ) function ] ( https://www.briandunning.com/cf/897 )  , ( https://github.com/Automation-USA/custom-functions/blob/master/CullNulls.fmfn )
+ *		
+ *		PLEASE NOTE: 
+ * 		REQUIRES FILEMAKER 16 OR NEWER FOR NATIVE JSON FUNCTIONS
+ * 		REQUIRES A TOTAL OF THREE (3) CUSTOM FUNCTIONS: { GetLayoutObjectNames (this), JSONExplode, CullNulls }
+ *		
+ *
+ * KNOWN ISSUES:
+ * 		None
+ *
+ * NOTES:
+ * 		None
+ *
+ * RELEASE:
+ * 		2019-01-09 - Initial release by Julio Toledo, Automation USA LLC ( www.automationusa.net )
+ *
+ * =====================================================
+ * 
+ */
+
+Let ( 
+
+	[
+
+	file = If ( IsEmpty ( file ) ; Get ( FileName ) ; file )  ;
+
+	layout = If ( IsEmpty ( layout ) ; Get ( LayoutName ) ; layout ) ;
+
+	output =  Case ( 
+
+				IsEmpty ( output )  ; "list" ;
+ 
+				output = "json" ; "json" ; 
+
+				output = "nvp" ; "explode" ; 
+
+				output = "valuePairs" ; "explode" ; 
+
+				output = "namedList" ; "explode" ; 
+
+				output = "nameValuePairs" ; "explode" ; 
+
+				//default
+				"list" 
+			)  ;
+
+	list = Substitute ( 
+
+			LayoutObjectNames ( File ; Layout ) ; 
+
+			[ "<<" ; "<" ] ; [ ">>" ; ">" ] ; [ "¶<" ; "" ] ; [ "¶>" ; "" ] ; ["<¶" ; "" ] ; [ "¶¶" ; ¶ ] 
+		) ;
+
+	json = If ( output = "json" or output = "explode" ; 
+
+			Let ( 
+
+				[
+
+				json = JSONSetElement ( 
+
+						"{}" ; 
+
+						[ "layoutName" ; Get ( LayoutName ) ; JSONString ] ;
+
+						[ "layoutNumber" ; Get ( LayoutNumber ) ; JSONNumber ] 
+
+					) ;
+ 
+
+				ids = JSONSetElement ( 
+
+					"" ; 
+					[ "objectNames" ; list ; JSONString ] ;
+
+					[ "objectCount" ; ValueCount ( list ) ; JSONNumber ]
+
+				) ;
+
+				out = JSONSetElement ( json ; ".namedObjects" ; ids ; JSONObject )
+
+				] ; 
+
+				//calculation
+				JSONFormatElements ( out )
+		) ;
+
+			//else
+			""
+		)
+
+	] ;
+	
+	//calculation
+	Case ( 
+			output = "json" ; json ; 
+
+			output = "explode" ; JSONExplode ( json ) ;
+
+			list
+		) 
+)
