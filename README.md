@@ -15,6 +15,8 @@ FileMaker Custom Functions
 
 'GetMinorVersion' function extracts Patch and Minor application version numbers (as string) from version string. This function is intended to evaluate file names, server application version,  API versions, global variables, window names, or any other string you throw at it.
 
+'GetRelativeDayName' function returns relative day name for today, 7 days into the past, and one day into the future in abbreviated or fullly spelled format.
+
 'GetSystemPlatformVersion' function transforms host OS name & version number, or OS abbreviation & browser version, to human readable format
 
 'GetLayoutViewState' function converts window view state integer values into human readable strings
