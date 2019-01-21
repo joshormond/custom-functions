@@ -1,0 +1,194 @@
+/*
+ * =====================================================
+ * GetRelativeDayName
+ * 
+ * PARAMETERS:
+ *		theDate = date as string.
+ *		resultLength = output format as string ( defaults to full spelling of day name )
+ *					Acceptable parameter values:  "S", "short" , "abbrev", or null "" 
+ *
+ *
+ * RETURNS:
+ *		Returns relative day name for today, 7 days in the past, and one day into the future in abbreviated or fullly spelled format.
+ *		Supports eight (8) different system languages (defaults to English)
+ *
+ *
+ *		Examples: 
+ *
+ *		GetRelativeDayName ( "1/20/2019; "" ) returns "Today" when current host timestamp = "1/20/2019 9:36:21 PM" and language evaluates to default ( English )
+ *
+ *		GetRelativeDayName ( "19/01/2019; "" ) returns "Ieri" ( i.e. "Yesterday" ) when current host timestamp = "20/01/2019 21:36:21 PM" and language evaluates to "Italian"
+ *
+ *		GetRelativeDayName ( "21/01/2019; "s" ) returns "Mañana" ( i.e "Tomorrow" ) when current host timestamp = "20/01/2019 9:36:21 PM" and language evaluates to "Spanish"
+ *
+ *		GetRelativeDayName ( "12/01/2019; "short" ) returns "última sex" ( e.g. "última sexta-feira" ) when current host timestamp = "19/01/2019 9:36:21 PM" and language evaluates to "Portugese"
+ *
+ *		GetRelativeDayName ( "14/01/2019; "" ) returns "Lundi" when current host timestamp = "19/01/2019 21:36:21 PM" and language evaluates to "French"
+ *
+ *		GetMinorVersion ( Get ( FileName ) ) returns ".0.3.5” when  Get ( FileName )  = "My_App_0-0-3-5"
+ *
+ *		GetMinorVersion ( Get ( FileName ) ) returns ".1.3.5" when  Get ( FileName )  = "My-App-2,1,3,5"
+ *
+ *		Returns "N/A" as default
+ *
+ * DEPENDENCIES:
+ * 		None
+ *
+ *
+ * KNOWN ISSUES:
+ * 		May generate nonsensical day name abbreviations and/or non-sensical phrases, particularly in non-European languages.
+ *
+ * NOTES:
+ * 		None
+ *
+ * RELEASE:
+ * 		2019-01-20 - Initial release by Julio Toledo, Automation USA LLC ( www.automationusa.net )
+ *
+ * =====================================================
+ * 
+ */
+
+Let ( 
+
+	[
+
+		lang = Get ( SystemLanguage ) ;
+
+		theDate = GetAsDate ( theDate )  ;
+
+		dateDow = DayOfWeek ( theDate ) ; 
+		
+		today = GetAsDate ( Get ( CurrentHostTimestamp ) ) ; 
+
+		dow = DayOfWeek ( today ) ;
+
+		abbrev = Case ( 
+
+				resultLength = "S" or resultLength = "short" or Left ( resultLength ; 6 ) = "abbrev" ; 
+				Left ( DayName ( theDate ) ; 3 )  ; 
+
+				Trim ( resultLength ) = "" ;
+				DayName ( theDate )  ;
+
+				//default
+				DayName ( theDate ) 
+
+				) ;
+
+		tomorrow = Case ( 
+  
+				lang = "Japanese" ; "明日" ;
+				
+				lang = "Korean"; "내일" ;
+  
+				lang = "Italian" ; "Domani" ;
+  
+				lang = "Spanish" ; "Mañana" ;
+  
+				lang = "German" ; "Morgen" ;
+  
+				lang = "French"; "Demain" ;
+  
+				lang = "Portugese"; "Amanhã" ;
+  
+				//default
+				"Tomorrow" 
+  
+				) ;
+
+
+		present = Case ( 
+  
+				lang = "Japanese" ; "今日" ;
+				
+				lang = "Korean"; "오늘" ;
+  
+				lang = "Italian" ; "Oggi" ;
+  
+				lang = "Spanish" ; "Hoy" ;
+  
+				lang = "German" ; "Heute" ;
+  
+				lang = "French"; "Aujourd'hui" ;
+  
+				lang = "Portugese"; "Hoje" ;
+  
+				//default
+				"Today" 
+  
+				) ;
+
+		yesterday = Case ( 
+  
+				lang = "Japanese" ; "昨日" ;
+				
+				lang = "Korean"; "어제" ;
+  
+				lang = "Italian" ; "Ieri" ;
+  
+				lang = "Spanish" ; "Ayer" ;
+  
+				lang = "German" ; "Gestern" ;
+  
+				lang = "French"; "Hier" ;
+  
+				lang = "Portugese"; "Ontem" ;
+  
+				//default
+				"Yesterday" 
+  
+				) ;
+
+		past = Case ( 
+  
+				lang = "Japanese" ;
+				If ( dateDow = 6 or dateDow = 4 ; "この間の" & abbrev; "先週の " & abbrev ) ;
+				
+				lang = "Korean";
+				"지난 " & abbrev ;
+  
+				lang = "Italian" ;
+				If ( dateDow = 7 ; abbrev & " scorsa" ; abbrev & " scorso" ) ;
+  
+				lang = "Spanish" ;
+				abbrev & " pasado" ;
+  
+				lang = "German";
+				"letzten " & abbrev ;
+  
+				lang = "French";
+				abbrev & " dernier" ;
+  
+				lang = "Portugese";
+				Case ( 
+					dateDow = 1 or dateDow = 2 ; abbrev & " passada" ; 
+					dateDow ≥ 3 and dateDow ≤5 ; "última " & abbrev ; 
+					dateDow = 6 or dateDow = 7 ; "último " & abbrev
+					) ;
+  
+				//default
+				"last " & abbrev
+  
+				) ;
+
+		abbrev = If ( dow = 1 or theDate ≤ today - 7; past ; abbrev )
+
+	] ; 
+
+		//calculation
+		Case ( 
+
+			theDate = today + 1 ; tomorrow ; 
+
+			theDate = today ; present ; 
+
+			theDate = today - 1 ; yesterday ; 
+
+			theDate ≤ today - 2 and theDate ≥ today -7 ; abbrev ;
+
+			//default
+			theDate
+ 
+		)
+
+)
