@@ -9,7 +9,7 @@
  *
  *
  * RETURNS:
- *		Returns relative day name for today, 7 days in the past, and one day into the future in abbreviated or fullly spelled format.
+ *		Returns relative day name for today, 7 days in the past, and one day into the future in abbreviated or fully spelled format.
  *		Supports eight (8) different system languages (defaults to English)
  *
  *
