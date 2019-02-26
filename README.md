@@ -1,5 +1,5 @@
 # custom-functions
-FileMaker Custom Functions
+FileMaker Custom Functions (aka user-defined functions)
 
 'ArrayReformat' function transforms any lists with any separator into a text array in any syntax you specify (JSON, CSV, etc.)
 
