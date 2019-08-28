@@ -25,4 +25,6 @@ FileMaker Custom Functions (aka user-defined functions)
 
 'GetWindowStyle' converts window style integer values into human readable strings
 
+'hostCanRPC' tests whether file is hosted on a version of Server that supports PSoS (Perform Script On Server) aka RPCs (Remote Procedure Calls).
+
 'JSONExplode' transforms JSON into a return-delimited list similar to YAML
