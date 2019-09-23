@@ -21,7 +21,7 @@
  *
  *		GetRelativeDayName ( "21/01/2019; "s" ) returns "Mañana" ( i.e "Tomorrow" ) when current host timestamp = "20/01/2019 9:36:21 PM" and language evaluates to "Spanish"
  *
- *		GetRelativeDayName ( "12/01/2019; "short" ) returns "última sex" ( e.g. "última sexta-feira" ) when current host timestamp = "19/01/2019 9:36:21 PM" and language evaluates to "Portuguese"
+ *		GetRelativeDayName ( "12/01/2019; "short" ) returns "última sex" ( e.g. "última sexta-feira" ) when current host timestamp = "19/01/2019 9:36:21 PM" and language evaluates to "Portugese"
  *
  *
  * DEPENDENCIES:
@@ -82,7 +82,7 @@ Let (
   
 				lang = "French"; "Demain" ;
   
-				lang = "Portuguese"; "Amanhã" ;
+				lang = "Portugese"; "Amanhã" ;
   
 				//default
 				"Tomorrow" 
@@ -104,7 +104,7 @@ Let (
   
 				lang = "French"; "Aujourd'hui" ;
   
-				lang = "Portuguese"; "Hoje" ;
+				lang = "Portugese"; "Hoje" ;
   
 				//default
 				"Today" 
@@ -125,7 +125,7 @@ Let (
   
 				lang = "French"; "Hier" ;
   
-				lang = "Portuguese"; "Ontem" ;
+				lang = "Portugese"; "Ontem" ;
   
 				//default
 				"Yesterday" 
@@ -152,7 +152,7 @@ Let (
 				lang = "French";
 				abbrev & " dernier" ;
   
-				lang = "Portuguese";
+				lang = "Portugese";
 				Case ( 
 					dateDow = 1 or dateDow = 2 ; abbrev & " passada" ; 
 					dateDow ≥ 3 and dateDow ≤5 ; "última " & abbrev ; 
